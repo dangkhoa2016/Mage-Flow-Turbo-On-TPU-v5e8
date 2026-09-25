@@ -1,0 +1,76 @@
+{
+  "status": "PASS",
+  "device": "TPU v5e-8",
+  "topology": "4x2",
+  "steps": 4,
+  "seeds": [
+    42,
+    43,
+    44,
+    45
+  ],
+  "policy": {
+    "512": "segmented",
+    "768": "segmented",
+    "1024": "segmented-query-chunk:256"
+  },
+  "results": [
+    {
+      "resolution": 512,
+      "attention_mode": "segmented",
+      "query_chunk": null,
+      "transformer_warm_batch_s": 13.123943567276001,
+      "transformer_warm_effective_s_per_image": 3.2809858918190002,
+      "transformer_warm_images_per_min": 18.287186223387142,
+      "transformer_peak_hbm_bytes": 9175782912,
+      "vae_warm_batch_s": 0.7363488674163818,
+      "png_sha256": [
+        "ba41ae9705d502218293acdc2bdda6373544b77d6a28277565e0893f1ec0fab6",
+        "923515c5d362ceb7fa1e00539679998c9564dafcb3df36cca94c0025f85a8242",
+        "ff7af057f7713a38cc7bfa403703462f1474166ad05123bd4a6eba4a82ac7823",
+        "61c9ff7e02f206ab0a4d14a486594d4bb934487e60158431008264a77a2b2819"
+      ]
+    },
+    {
+      "resolution": 768,
+      "attention_mode": "segmented",
+      "query_chunk": null,
+      "transformer_warm_batch_s": 15.228076219558716,
+      "transformer_warm_effective_s_per_image": 3.807019054889679,
+      "transformer_warm_images_per_min": 15.7603624082041,
+      "transformer_peak_hbm_bytes": 14757413888,
+      "vae_warm_batch_s": 0.7501986026763916,
+      "png_sha256": [
+        "2e605d6ee28263f5eff867fee0cb4e1de2ac0d2366cd8c79b79778c1764b1eeb",
+        "c00ad4c2704a7bba6fec433afdcc663e70fc8327270d8652ba5e2563cefa8a0e",
+        "2b57d916ba61e47dae8074fb901a15ec0d0643eed01bebb49ae27bb69333b8aa",
+        "c78a5571a12c88bfe8832d702e40a2eaec215f9fd4b96603652b40104f18707d"
+      ]
+    },
+    {
+      "resolution": 1024,
+      "attention_mode": "segmented-query-chunk",
+      "query_chunk": 256,
+      "transformer_warm_batch_s": 33.5415153503418,
+      "transformer_warm_effective_s_per_image": 8.38537883758545,
+      "transformer_warm_images_per_min": 7.155311782821832,
+      "transformer_peak_hbm_bytes": 12532521472,
+      "vae_warm_batch_s": 0.7819235324859619,
+      "png_sha256": [
+        "e48b4c1a40f2840b1a69d7181fdb43409359fe17a078242f6271eda0cae0c257",
+        "e5d8ab9aeef11cf011a72178591bccb899e047cc30d4fd59320c6c608b73d0b8",
+        "76fe21ae571e5f25c586362aed5e964f6f9c41e3fcdba8a6186dd9e9d91ac026",
+        "d16d96228e03484a54f321545696611bde8b8e22cf9c7564c350a354167b54fe"
+      ]
+    }
+  ],
+  "acceptance": [
+    "TPU backend 8 devices",
+    "397 transformer leaves",
+    "174 sharded / 223 replicated",
+    "728/728 VAE binding",
+    "bit-exact warm rerun",
+    "unique outputs per seed",
+    "PNG byte-identical to visually accepted qualification runs"
+  ]
+}

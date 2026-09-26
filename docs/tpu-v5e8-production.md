@@ -1,5 +1,7 @@
 # Mage-Flow TPU v5e-8 Production Runtime
 
+> 🌐 Language / Ngôn ngữ: **English** | [Tiếng Việt](tpu-v5e8-production.vi.md)
+
 This document records the production runtime that passed acceptance on 2026-09-25.
 
 ## Qualified contract
@@ -32,12 +34,13 @@ Segmented production modes intentionally require equal packed request lengths an
 
 These figures come from the final promoted production runner, not exploratory scripts.
 
+> These are warm stage-level measurements. They are not full cold-start or end-to-end image-generation latency.
+
 ## Correctness requirements
 
-Do not regress BF16 timestep semantics:
-`jnp.asarray(timesteps, dtype=jnp.bfloat16).astype(jnp.float32)`.
+Do not regress BF16 timestep semantics: `jnp.asarray(timesteps, dtype=jnp.bfloat16).astype(jnp.float32)`.
 
-Construct and restore model state on CPU before TPU mesh `device_put`. Keep per-request segmented attention for concurrent execution and keep query chunk 256 at 1024 unless a new TPU qualification replaces this authority.
+Construct and restore model state on CPU before TPU mesh `device_put`. Keep per-request segmented attention for concurrent execution and query chunk 256 at 1024 unless a new TPU qualification replaces this authority.
 
 The final production outputs at 512, 768, and 1024 were byte-identical to the previously visually accepted qualification PNGs.
 
@@ -47,11 +50,10 @@ Use `bootstrap/06_run_tpu_inference.py` with isolated text-encoder, transformer,
 
 The runner accepts `1x8`, `2x4`, and `4x2` topologies. Only the qualified 4-step schedule is accepted by the production runner.
 
-Repository-level CPU tests should cover legacy masked-global compatibility, segmented attention, segmented-query-chunk, fail-closed validation, topology parsing, auto policy, and BF16 timestep semantics.
-
 ## Release verification
 
-CPU tests and CI cover repository integration; they do not replace TPU release verification. Before publication, rerun the committed release candidate on TPU v5e-8 at 4x2 for 512, 768, and 1024 and compare against the accepted evidence authority.
+CPU tests and CI cover repository integration; they do not replace TPU release verification. A runtime-semantic release candidate should be rerun on TPU v5e-8 at 4x2 for 512, 768, and 1024 and compared against the accepted evidence authority.
 
-Evidence archive SHA-256:
-`4982c750914599561cd5255c1ad9e58cfb02a9f2c26a299801271a92d2c0bf68`.
+Evidence archive SHA-256: `4982c750914599561cd5255c1ad9e58cfb02a9f2c26a299801271a92d2c0bf68`.
+
+See [Release and verification](release-and-verification.md) and [Benchmarks](benchmarks.md).

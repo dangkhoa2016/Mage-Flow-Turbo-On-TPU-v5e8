@@ -1,0 +1,38 @@
+name: Feature request
+description: Propose a scoped improvement to the runtime engineering project
+title: "[Feature] "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Please keep proposals within the repository's JAX/Keras TPU inference, packaging, testing, documentation, or reproducibility scope.
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem or use case
+      description: What problem would this feature solve?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed change
+      description: Describe the desired behavior and interfaces.
+    validations:
+      required: true
+  - type: dropdown
+    id: qualification
+    attributes:
+      label: Does this likely change TPU runtime semantics?
+      options:
+        - No
+        - Yes
+        - Unsure
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: Optional alternatives or workarounds.

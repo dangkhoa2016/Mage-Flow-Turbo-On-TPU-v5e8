@@ -1,0 +1,65 @@
+name: Bug report
+description: Report a reproducible runtime, documentation, or packaging problem
+title: "[Bug] "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting a problem. Do not include tokens, credentials, private URLs, or sensitive data.
+  - type: input
+    id: commit
+    attributes:
+      label: Commit or release
+      description: Exact commit SHA or release/tag.
+      placeholder: 2bf48069... or v1.0.0
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - Runtime / inference
+        - TPU / sharding / attention
+        - Model artifact / paths
+        - Documentation
+        - CI / tests
+        - Licensing / attribution
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: Include platform, accelerator, JAX/Keras versions, topology, and resolution when relevant.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Reproduction steps
+      description: Minimal commands or steps needed to reproduce the issue.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior and logs
+      description: Sanitize all secrets before posting.
+    validations:
+      required: true
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Safety checks
+      options:
+        - label: I removed tokens, credentials, private URLs, and sensitive data.
+          required: true

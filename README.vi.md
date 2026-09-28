@@ -1,33 +1,83 @@
-# Mage-Flow Turbo trên TPU v5e-8
+# Mage-Flow-Turbo trên TPU v5e-8
 
-Mã nguồn runtime Keras 3 / JAX và lớp orchestration production cho Mage-Flow Turbo trên Kaggle TPU v5e-8.
+> 🌐 Ngôn ngữ / Language: [English](README.md) | **Tiếng Việt**
 
-Profile production đã qualify sử dụng tám TPU device với topology **4x2 replica/model** ưu tiên, bốn bước denoise, segmented attention ở 512/768 và segmented query-chunk attention ở 1024.
+[![CI](https://github.com/dangkhoa2016/Mage-Flow-Turbo-On-TPU-v5e8/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/dangkhoa2016/Mage-Flow-Turbo-On-TPU-v5e8/actions/workflows/ci.yml)
+[![Release](https://img.shields.io/github/v/release/dangkhoa2016/Mage-Flow-Turbo-On-TPU-v5e8?display_name=tag&sort=semver)](https://github.com/dangkhoa2016/Mage-Flow-Turbo-On-TPU-v5e8/releases/tag/v1.0.0)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Model licenses](https://img.shields.io/badge/Model%20licenses-MIT%20%2B%20Apache--2.0-informational.svg)](MODEL_LICENSE.md)
+[![Python](https://img.shields.io/badge/Python-3.12-3776AB?logo=python&logoColor=white)](https://www.python.org/)
+[![JAX](https://img.shields.io/badge/JAX-0.10.2-5A5A5A)](https://github.com/jax-ml/jax)
+[![Keras](https://img.shields.io/badge/Keras-3.15.0-D00000?logo=keras&logoColor=white)](https://keras.io/)
+[![Kaggle](https://img.shields.io/badge/Kaggle-TPU%20v5e--8-20BEFF?logo=kaggle&logoColor=white)](https://www.kaggle.com/)
 
-## Profile production
+Dự án **runtime JAX / Keras 3 và kỹ thuật production TPU cho Mage-Flow-Turbo**, đã được qualification trên Kaggle TPU v5e-8 theo hướng có thể tái tạo.
 
-| Độ phân giải | Attention | Query chunk | Warm transformer batch | Ảnh/phút |
-|---|---|---:|---:|---:|
-| 512 | segmented | — | 13.124 s / 4 | 18.29 |
-| 768 | segmented | — | 15.228 s / 4 | 15.76 |
-| 1024 | segmented-query-chunk | 256 | 33.542 s / 4 | 7.16 |
+Repository này chứa mã nguồn runtime, orchestration TPU, correctness contract, CPU regression test, acceptance metadata và tài liệu dùng để chạy model Mage-Flow-Turbo đã chuyển đổi trên môi trường TPU v5e-8 gồm 8 thiết bị. Đây là dự án kỹ thuật conversion/runtime độc lập; dự án **không** tuyên bố huấn luyện lại hoặc thay thế model Mage-Flow upstream.
 
-Acceptance cũng xác minh 397 transformer leaves, 174 sharded / 223 replicated parameters, VAE binding 728/728, warm rerun bit-exact, output khác nhau theo seed và PNG byte-identical với các qualification run đã được review trực quan.
+![Ảnh 1024px từ Mage-Flow-Turbo JAX/Orbax](assets/announcement/hero-1024.png)
 
-## Cấu trúc repository
+## Trạng thái
 
-```text
-runtime/final/source/mage_flow_keras/  mã nguồn transformer JAX/Keras đã qualify
-bootstrap/                             production TPU runner và stage helpers
-tests/                                 CPU regression tests
-docs/                                  tài liệu production EN/VI
-acceptance/                            metadata acceptance gọn nhẹ
-```
+| Hạng mục | Giá trị đã qualify |
+| --- | --- |
+| Release | `v1.0.0` |
+| Qualified runtime commit | `2bf480691789e5db0f49b6c9ab8c134508bff38f` |
+| Accelerator | Kaggle TPU v5e-8 |
+| TPU devices | 8 |
+| Preferred topology | `4x2` replica/model |
+| Denoising steps | 4 |
+| Qualified resolutions | 512, 768, 1024 |
+| Default acceptance seeds | 42, 43, 44, 45 |
+| Transformer parameters | 397 leaves |
+| Sharding | 174 sharded / 223 replicated |
+| VAE runtime binding | 728 / 728 |
+| Production acceptance | PASS |
 
-## Runtime prerequisites
+Runtime gắn tag v1.0.0 là baseline source đã được qualification. Những thay đổi chỉ liên quan đến tài liệu trên `main`, nếu có, không làm thay đổi inference core đã được acceptance trừ khi được ghi rõ.
 
-Các checkpoint lớn, pinned Python runtime cache và package runtime support `experiment` bên ngoài được chủ động không lưu trong Git repository này.
+## Repository này cung cấp gì
 
-Production runner nhận các đường dẫn đó qua `--runtime-root`, `--runtime-site` tùy chọn, checkpoint arguments, RoPE basis inputs và canonical model root. Cách này giữ repository dễ review nhưng vẫn bảo toàn các runtime contract có thể tái tạo.
+- Mã nguồn Transformer JAX/Keras tại `runtime/final/source/mage_flow_keras/`.
+- Production TPU runner với các stage Text Encoder, Transformer và VAE chạy trong subprocess tách biệt.
+- Điều khiển rõ ràng topology, resolution, attention, checkpoint, RoPE và runtime path.
+- Validation fail-closed cho attention argument không hỗ trợ và packed request có chiều dài không đồng đều.
+- Attention policy đã qualify cho 512, 768 và 1024.
+- CPU regression test cho attention equivalence, topology/policy contract, portable path và BF16 timestep semantics.
+- Production acceptance metadata ở dạng machine-readable.
+- Bộ tài liệu tiếng Anh và tiếng Việt về conversion, thực thi TPU, benchmark, reproducibility, limitation và troubleshooting.
+- Model JAX/Orbax public trên Hugging Face và Kaggle.
 
-Xem [tài liệu production TPU v5e-8](docs/tpu-v5e8-production.vi.md) để biết policy đã qualify, benchmark, correctness constraints và yêu cầu verification trước release.
+## Phân phối model public
+
+GitHub repository này là **runtime engineering source**. Các model artifact lớn được phân phối riêng.
+
+| Nền tảng | Mục đích |
+| --- | --- |
+| [Hugging Face model](https://huggingface.co/dangkhoa2016/Mage-Flow-Turbo-JAX-TPU-v5e8) | Model artifact JAX/Orbax trung lập nền tảng |
+| [Kaggle Model](https://www.kaggle.com/models/dangkhoa2016/mage-flow-turbo-jax-tpu-v5e8) | Phân phối model native cho Kaggle |
+| [Kaggle TPU demo](https://www.kaggle.com/code/dangkhoa2016/mage-flow-turbo-jax-tpu-v5e8-demo) | Demo TPU có thể chạy trực tiếp |
+| [Microsoft Mage upstream](https://github.com/microsoft/Mage) | Dự án nghiên cứu và model family gốc |
+
+## Ví dụ ảnh được tạo
+
+Bốn ảnh 1024×1024 bên dưới được tạo bằng public JAX/Orbax artifact trên TPU v5e-8 và được chọn thủ công từ các output điều khiển bằng seed.
+
+![Bốn ảnh Mage-Flow-Turbo được chọn](assets/announcement/sample-grid-4.png)
+
+Đây là ví dụ định tính, **không phải** benchmark.
+
+## Bắt đầu từ đâu
+
+| Mục tiêu | Tài liệu nên đọc |
+| --- | --- |
+| Hiểu model đã được chuyển đổi như thế nào | [Model và conversion](docs/model-and-conversion.vi.md) |
+| Chạy trên Kaggle TPU v5e-8 | [Hướng dẫn Kaggle TPU](docs/kaggle-tpu-v5e8.vi.md) |
+| Hiểu thiết kế runtime | [Kiến trúc](docs/architecture.vi.md) |
+| Dùng production runner | [Hướng dẫn inference](docs/inference-guide.vi.md) |
+| Hiểu đúng số liệu performance | [Benchmark](docs/benchmarks.vi.md) |
+| Tái tạo kết quả đã qualify | [Reproducibility](docs/reproducibility.vi.md) |
+| Audit release evidence | [Release và verification](docs/release-and-verification.vi.md) |
+| Xử lý lỗi | [Troubleshooting](docs/troubleshooting.vi.md) |
+| Hiểu các giới hạn | [Limitations](docs/limitations.vi.md) |
+| Xem toàn bộ tài liệu | [Documentation Hub](docs/index.vi.md) |

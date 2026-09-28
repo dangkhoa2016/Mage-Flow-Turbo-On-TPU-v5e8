@@ -81,3 +81,43 @@ Bốn ảnh 1024×1024 bên dưới được tạo bằng public JAX/Orbax artif
 | Xử lý lỗi | [Troubleshooting](docs/troubleshooting.vi.md) |
 | Hiểu các giới hạn | [Limitations](docs/limitations.vi.md) |
 | Xem toàn bộ tài liệu | [Documentation Hub](docs/index.vi.md) |
+
+## Profile TPU đã qualify
+
+| Độ phân giải | Attention production | Query chunk |
+| --- | --- | ---: |
+| 512 | segmented | — |
+| 768 | segmented | — |
+| 1024 | segmented-query-chunk | 256 |
+
+Production runner nhận topology `1x8`, `2x4`, `4x2`, nhưng production qualification đã công bố dùng **4x2**. Runner đã qualify chỉ chấp nhận lịch denoise bốn bước.
+
+### Performance stage warm
+
+| Độ phân giải | Warm Transformer batch / 4 | Hiệu dụng s/ảnh | Ảnh/phút | Peak HBM/chip | Warm VAE batch |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| 512 | 13.124 s | 3.281 | 18.29 | ~9.18 GB | 0.736 s |
+| 768 | 15.228 s | 3.807 | 15.76 | ~14.76 GB | 0.750 s |
+| 1024 | 33.542 s | 8.385 | 7.16 | ~12.53 GB | 0.782 s |
+
+> **Phạm vi benchmark:** đây là số đo warm của **Transformer stage** và **VAE stage** từ production runner đã qualify. Chúng không phải full cold-start hoặc end-to-end image-generation latency và không nên so sánh trực tiếp với timing GPU full-pipeline.
+
+## Correctness và acceptance
+
+Production acceptance xác minh 8 TPU device, 397 Transformer leaves, 174 sharded / 223 replicated parameters, VAE binding `728/728`, deterministic bit-exact warm rerun, output khác nhau theo seed và PNG byte-identical với qualification output đã review trực quan trước đó.
+
+Authority machine-readable là [`acceptance/PRODUCTION_ACCEPTANCE.json`](acceptance/PRODUCTION_ACCEPTANCE.json).
+
+## Quick start
+
+Repository chủ động không lưu checkpoint Orbax lớn hoặc toàn bộ pinned runtime cache. Hãy attach/download public model artifact trước, sau đó truyền các đường dẫn model và runtime cho runner.
+
+```bash
+python3 bootstrap/06_run_tpu_inference.py \
+  --topology 4x2 --resolution 1024 --seeds 42,43,44,45 --steps 4 \
+  --attention auto --model-root "$MODEL_ROOT" --runtime-root "$RUNTIME_ROOT" \
+  --runtime-site "$RUNTIME_SITE" --text-checkpoint "$TEXT_CHECKPOINT" \
+  --transformer-checkpoint "$TRANSFORMER_CHECKPOINT" --vae-checkpoint "$VAE_CHECKPOINT" \
+  --vae-manifest "$VAE_MANIFEST" --basis-dim16 "$BASIS_DIM16" \
+  --basis-dim56 "$BASIS_DIM56" --output "$OUTPUT_DIR"
+```

@@ -83,3 +83,77 @@ These images are qualitative examples, **not** benchmark measurements.
 | Diagnose a failure | [Troubleshooting](docs/troubleshooting.md) |
 | Understand boundaries | [Limitations](docs/limitations.md) |
 | Browse all documentation | [Documentation Hub](docs/index.md) |
+
+## Architecture
+
+```mermaid
+flowchart LR
+    A[Prompt] --> B[Text Encoder]
+    B --> C[Conditioning]
+    C --> D[Mage-Flow Transformer]
+    D --> E[Latents]
+    E --> F[VAE]
+    F --> G[RGB PNG]
+    H[Kaggle TPU v5e-8 / 8 devices] --> D
+    I[4x2 replica/model mesh] --> D
+    J[Orbax checkpoints] --> B
+    J --> D
+    J --> F
+```
+
+The production runner deliberately executes Text Encoder, Transformer, and VAE as isolated subprocess stages. Model state is constructed/restored on CPU before TPU mesh `device_put`, which is part of the qualified runtime contract.
+
+See [Architecture](docs/architecture.md) for the full execution model.
+
+## Qualified TPU profile
+
+| Resolution | Production attention | Query chunk |
+| --- | --- | ---: |
+| 512 | segmented | — |
+| 768 | segmented | — |
+| 1024 | segmented-query-chunk | 256 |
+
+The production runner supports topology arguments `1x8`, `2x4`, and `4x2`, but the published production qualification uses **4x2**. Only the four-step denoising schedule is accepted by the qualified runner.
+
+### Warm stage performance
+
+| Resolution | Warm Transformer batch / 4 | Effective s/image | Images/min | Peak HBM/chip | Warm VAE batch |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| 512 | 13.124 s | 3.281 | 18.29 | ~9.18 GB | 0.736 s |
+| 768 | 15.228 s | 3.807 | 15.76 | ~14.76 GB | 0.750 s |
+| 1024 | 33.542 s | 8.385 | 7.16 | ~12.53 GB | 0.782 s |
+
+> **Benchmark scope:** these are warm **Transformer-stage** and warm **VAE-stage** measurements from the qualified production runner. They are not full cold-start or end-to-end image-generation latency and should not be compared directly with full-pipeline GPU timings.
+
+See [Benchmarks](docs/benchmarks.md) for scope and interpretation.
+
+## Correctness and acceptance
+
+The production acceptance verifies:
+
+- TPU backend with 8 devices;
+- 397 Transformer parameter leaves;
+- 174 sharded / 223 replicated parameters;
+- VAE runtime binding coverage `728/728`;
+- deterministic bit-exact warm reruns;
+- unique outputs across seeds;
+- PNG byte identity with the previously visually accepted qualification outputs;
+- no runtime monkey patch required for promoted segmented/query-chunk attention.
+
+The machine-readable authority is [`acceptance/PRODUCTION_ACCEPTANCE.json`](acceptance/PRODUCTION_ACCEPTANCE.json).
+
+## Quick start
+
+The repository intentionally does not store the large Orbax checkpoints or the complete pinned runtime cache. Attach/download the public model artifact first, then point the runner at the model and runtime paths.
+
+```bash
+python3 bootstrap/06_run_tpu_inference.py \
+  --topology 4x2 --resolution 1024 --seeds 42,43,44,45 --steps 4 \
+  --attention auto --model-root "$MODEL_ROOT" --runtime-root "$RUNTIME_ROOT" \
+  --runtime-site "$RUNTIME_SITE" --text-checkpoint "$TEXT_CHECKPOINT" \
+  --transformer-checkpoint "$TRANSFORMER_CHECKPOINT" --vae-checkpoint "$VAE_CHECKPOINT" \
+  --vae-manifest "$VAE_MANIFEST" --basis-dim16 "$BASIS_DIM16" \
+  --basis-dim56 "$BASIS_DIM56" --output "$OUTPUT_DIR"
+```
+
+Use the public Kaggle demo for the shortest reproducible execution path. Use this repository directly when you need to inspect or integrate the runtime engineering source.

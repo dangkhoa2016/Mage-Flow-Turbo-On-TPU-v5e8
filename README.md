@@ -34,7 +34,7 @@ This repository contains the runtime source, TPU orchestration, correctness cont
 | VAE runtime binding | 728 / 728 |
 | Production acceptance | PASS |
 
-The tagged v1.0.0 runtime is the qualified source baseline. Documentation-only changes on `main`, when present, do not change the accepted inference core unless explicitly stated.
+The TPU-qualified inference authority is commit `2bf480691789e5db0f49b6c9ab8c134508bff38f`, accepted on 2026-09-25. The `v1.0.0` tag identifies the v1.0.0 public release, which adds documentation, licensing, governance, and showcase material without changing that accepted inference core.
 
 ## What this repository provides
 
@@ -157,3 +157,66 @@ python3 bootstrap/06_run_tpu_inference.py \
 ```
 
 Use the public Kaggle demo for the shortest reproducible execution path. Use this repository directly when you need to inspect or integrate the runtime engineering source.
+
+## Development and CI
+
+```bash
+python -m pip install -r requirements-ci.txt
+python -m compileall -q runtime bootstrap tests scripts
+pytest -q tests/test_cpu_regressions.py
+python scripts/check_docs.py
+python scripts/check_repo_health.py
+git diff --check
+```
+
+CPU CI validates source-level contracts; it does **not** replace a real TPU qualification run.
+
+## Documentation
+
+The README is the landing page. Detailed documentation lives in the [Documentation Hub](docs/index.md).
+
+| Topic | English | Tiếng Việt |
+| --- | --- | --- |
+| Architecture | [Open](docs/architecture.md) | [Mở](docs/architecture.vi.md) |
+| Model and conversion | [Open](docs/model-and-conversion.md) | [Mở](docs/model-and-conversion.vi.md) |
+| Kaggle TPU v5e-8 | [Open](docs/kaggle-tpu-v5e8.md) | [Mở](docs/kaggle-tpu-v5e8.vi.md) |
+| Inference guide | [Open](docs/inference-guide.md) | [Mở](docs/inference-guide.vi.md) |
+| Benchmarks | [Open](docs/benchmarks.md) | [Mở](docs/benchmarks.vi.md) |
+| Reproducibility | [Open](docs/reproducibility.md) | [Mở](docs/reproducibility.vi.md) |
+| Release and verification | [Open](docs/release-and-verification.md) | [Mở](docs/release-and-verification.vi.md) |
+| Limitations | [Open](docs/limitations.md) | [Mở](docs/limitations.vi.md) |
+| Troubleshooting | [Open](docs/troubleshooting.md) | [Mở](docs/troubleshooting.vi.md) |
+| Production runtime authority | [Open](docs/tpu-v5e8-production.md) | [Mở](docs/tpu-v5e8-production.vi.md) |
+
+## Community and support
+
+- [Contributing](.github/CONTRIBUTING.md)
+- [Code of Conduct](.github/CODE_OF_CONDUCT.md)
+- [Security Policy](.github/SECURITY.md)
+- [Support](.github/SUPPORT.md)
+- [Issue templates](.github/ISSUE_TEMPLATE)
+- [Pull request template](.github/PULL_REQUEST_TEMPLATE.md)
+
+Security-sensitive reports should follow the private-reporting guidance in [SECURITY.md](.github/SECURITY.md), not a public issue.
+
+## License and upstream attribution
+
+The repository-level [MIT License](LICENSE) covers original engineering code and documentation for which this repository can grant MIT rights.
+
+Model-related components have a separate licensing boundary:
+
+- Mage-Flow / Mage-Flow-Turbo lineage: upstream **MIT**.
+- Qwen3-VL-derived Text Encoder/tokenizer lineage: upstream **Apache License 2.0**.
+- Converted model weights remain subject to applicable upstream terms and are **not relicensed** by this repository.
+
+See [MODEL_LICENSE.md](MODEL_LICENSE.md), [MODEL_LICENSE.vi.md](MODEL_LICENSE.vi.md), [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md), [NOTICE.md](NOTICE.md), and the preserved upstream license texts in [licenses/](licenses/).
+
+## Author
+
+**Đăng Khoa**
+
+`i.am@dangkhoa.dev`
+
+## Acknowledgements
+
+This project builds on Microsoft Mage/Mage-Flow, JAX, Keras, Orbax, Qwen3-VL components, Kaggle TPU infrastructure, and the wider open-source Python ecosystem. Their projects, trademarks, models, services, and licenses remain independent of this repository.

@@ -34,7 +34,7 @@ Repository này chứa mã nguồn runtime, orchestration TPU, correctness contr
 | VAE runtime binding | 728 / 728 |
 | Production acceptance | PASS |
 
-Runtime gắn tag v1.0.0 là baseline source đã được qualification. Những thay đổi chỉ liên quan đến tài liệu trên `main`, nếu có, không làm thay đổi inference core đã được acceptance trừ khi được ghi rõ.
+Authority của inference runtime đã qualify là commit `2bf480691789e5db0f49b6c9ab8c134508bff38f`, được acceptance ngày 2026-09-25. Tag `v1.0.0` xác định v1.0.0 public release, bổ sung tài liệu, licensing, governance và showcase mà không thay đổi inference core đã được acceptance đó.
 
 ## Repository này cung cấp gì
 
@@ -121,3 +121,66 @@ python3 bootstrap/06_run_tpu_inference.py \
   --vae-manifest "$VAE_MANIFEST" --basis-dim16 "$BASIS_DIM16" \
   --basis-dim56 "$BASIS_DIM56" --output "$OUTPUT_DIR"
 ```
+
+## Development và CI
+
+```bash
+python -m pip install -r requirements-ci.txt
+python -m compileall -q runtime bootstrap tests scripts
+pytest -q tests/test_cpu_regressions.py
+python scripts/check_docs.py
+python scripts/check_repo_health.py
+git diff --check
+```
+
+CPU CI kiểm tra contract ở cấp source; nó **không** thay thế qualification run thật trên TPU.
+
+## Tài liệu
+
+README là landing page. Tài liệu chi tiết nằm trong [Documentation Hub](docs/index.vi.md).
+
+| Chủ đề | English | Tiếng Việt |
+| --- | --- | --- |
+| Architecture | [Open](docs/architecture.md) | [Mở](docs/architecture.vi.md) |
+| Model và conversion | [Open](docs/model-and-conversion.md) | [Mở](docs/model-and-conversion.vi.md) |
+| Kaggle TPU v5e-8 | [Open](docs/kaggle-tpu-v5e8.md) | [Mở](docs/kaggle-tpu-v5e8.vi.md) |
+| Inference guide | [Open](docs/inference-guide.md) | [Mở](docs/inference-guide.vi.md) |
+| Benchmark | [Open](docs/benchmarks.md) | [Mở](docs/benchmarks.vi.md) |
+| Reproducibility | [Open](docs/reproducibility.md) | [Mở](docs/reproducibility.vi.md) |
+| Release và verification | [Open](docs/release-and-verification.md) | [Mở](docs/release-and-verification.vi.md) |
+| Limitations | [Open](docs/limitations.md) | [Mở](docs/limitations.vi.md) |
+| Troubleshooting | [Open](docs/troubleshooting.md) | [Mở](docs/troubleshooting.vi.md) |
+| Production runtime authority | [Open](docs/tpu-v5e8-production.md) | [Mở](docs/tpu-v5e8-production.vi.md) |
+
+## Community và hỗ trợ
+
+- [Contributing](.github/CONTRIBUTING.md)
+- [Code of Conduct](.github/CODE_OF_CONDUCT.md)
+- [Security Policy](.github/SECURITY.md)
+- [Support](.github/SUPPORT.md)
+- [Issue templates](.github/ISSUE_TEMPLATE)
+- [Pull request template](.github/PULL_REQUEST_TEMPLATE.md)
+
+Các báo cáo liên quan đến security nên làm theo hướng dẫn báo cáo riêng trong [SECURITY.md](.github/SECURITY.md), không mở public issue.
+
+## License và upstream attribution
+
+[MIT License](LICENSE) ở cấp repository áp dụng cho mã nguồn kỹ thuật và tài liệu gốc mà repository này có quyền cấp MIT.
+
+Các thành phần liên quan đến model có ranh giới license riêng:
+
+- Mage-Flow / Mage-Flow-Turbo lineage: upstream **MIT**.
+- Text Encoder/tokenizer có nguồn Qwen3-VL: upstream **Apache License 2.0**.
+- Converted model weights vẫn chịu các upstream terms tương ứng và **không bị repository này relicensing**.
+
+Xem [MODEL_LICENSE.md](MODEL_LICENSE.md), [MODEL_LICENSE.vi.md](MODEL_LICENSE.vi.md), [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md), [NOTICE.md](NOTICE.md) và các bản license upstream được lưu trong [licenses/](licenses/).
+
+## Tác giả
+
+**Đăng Khoa**
+
+`i.am@dangkhoa.dev`
+
+## Lời cảm ơn
+
+Dự án được xây dựng dựa trên Microsoft Mage/Mage-Flow, JAX, Keras, Orbax, các thành phần Qwen3-VL, hạ tầng Kaggle TPU và hệ sinh thái Python mã nguồn mở. Các dự án, thương hiệu, model, dịch vụ và license của họ vẫn độc lập với repository này.

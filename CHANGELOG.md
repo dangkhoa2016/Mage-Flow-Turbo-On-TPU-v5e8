@@ -13,3 +13,11 @@ Initial qualified production release.
 ## Post-release documentation
 
 Documentation-only maintenance on `main` may improve README presentation, bilingual navigation, public model links, documentation structure, and showcase media without changing the tagged v1.0.0 inference core.
+
+### Repository governance and licensing hardening
+
+- Added community-health files under `.github/`.
+- Added explicit model-component licensing boundaries in English and Vietnamese.
+- Preserved upstream Mage-Flow MIT and Qwen3-VL Apache-2.0 license texts.
+- Added third-party notices and repository-health CI validation.
+- Kept the repository-level MIT `LICENSE` unchanged.

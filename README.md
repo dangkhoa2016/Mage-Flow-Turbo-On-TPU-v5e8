@@ -5,6 +5,7 @@
 [![CI](https://github.com/dangkhoa2016/Mage-Flow-Turbo-On-TPU-v5e8/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/dangkhoa2016/Mage-Flow-Turbo-On-TPU-v5e8/actions/workflows/ci.yml)
 [![Release](https://img.shields.io/github/v/release/dangkhoa2016/Mage-Flow-Turbo-On-TPU-v5e8?display_name=tag&sort=semver)](https://github.com/dangkhoa2016/Mage-Flow-Turbo-On-TPU-v5e8/releases/tag/v1.0.0)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Model licenses](https://img.shields.io/badge/Model%20licenses-MIT%20%2B%20Apache--2.0-informational.svg)](MODEL_LICENSE.md)
 [![Python](https://img.shields.io/badge/Python-3.12-3776AB?logo=python&logoColor=white)](https://www.python.org/)
 [![JAX](https://img.shields.io/badge/JAX-0.10.2-5A5A5A)](https://github.com/jax-ml/jax)
 [![Keras](https://img.shields.io/badge/Keras-3.15.0-D00000?logo=keras&logoColor=white)](https://keras.io/)
@@ -161,9 +162,10 @@ Use the public Kaggle demo for the shortest reproducible execution path. Use thi
 
 ```bash
 python -m pip install -r requirements-ci.txt
-python -m compileall -q runtime bootstrap tests
+python -m compileall -q runtime bootstrap tests scripts
 pytest -q tests/test_cpu_regressions.py
 python scripts/check_docs.py
+python scripts/check_repo_health.py
 git diff --check
 ```
 
@@ -186,11 +188,28 @@ The README is the landing page. Detailed documentation lives in the [Documentati
 | Troubleshooting | [Open](docs/troubleshooting.md) | [Mở](docs/troubleshooting.vi.md) |
 | Production runtime authority | [Open](docs/tpu-v5e8-production.md) | [Mở](docs/tpu-v5e8-production.vi.md) |
 
+## Community and support
+
+- [Contributing](.github/CONTRIBUTING.md)
+- [Code of Conduct](.github/CODE_OF_CONDUCT.md)
+- [Security Policy](.github/SECURITY.md)
+- [Support](.github/SUPPORT.md)
+- [Issue templates](.github/ISSUE_TEMPLATE)
+- [Pull request template](.github/PULL_REQUEST_TEMPLATE.md)
+
+Security-sensitive reports should follow the private-reporting guidance in [SECURITY.md](.github/SECURITY.md), not a public issue.
+
 ## License and upstream attribution
 
-Original engineering code and documentation in this repository are released under the [MIT License](LICENSE). Mage-Flow model components and Qwen3-VL-lineage text-encoder components retain their upstream licensing and attribution. Model weights and third-party dependencies are not relicensed by this repository.
+The repository-level [MIT License](LICENSE) covers original engineering code and documentation for which this repository can grant MIT rights.
 
-See [NOTICE.md](NOTICE.md) and [Model and conversion](docs/model-and-conversion.md).
+Model-related components have a separate licensing boundary:
+
+- Mage-Flow / Mage-Flow-Turbo lineage: upstream **MIT**.
+- Qwen3-VL-derived Text Encoder/tokenizer lineage: upstream **Apache License 2.0**.
+- Converted model weights remain subject to applicable upstream terms and are **not relicensed** by this repository.
+
+See [MODEL_LICENSE.md](MODEL_LICENSE.md), [MODEL_LICENSE.vi.md](MODEL_LICENSE.vi.md), [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md), [NOTICE.md](NOTICE.md), and the preserved upstream license texts in [licenses/](licenses/).
 
 ## Author
 

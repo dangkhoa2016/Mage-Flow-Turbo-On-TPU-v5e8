@@ -32,5 +32,8 @@ jobs:
       - name: Validate bilingual documentation
         run: python scripts/check_docs.py
 
+      - name: Validate repository health and licensing
+        run: python scripts/check_repo_health.py
+
       - name: Check whitespace
         run: git diff --check

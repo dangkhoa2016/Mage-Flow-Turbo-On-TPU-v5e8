@@ -1,0 +1,28 @@
+# Third-Party Notices
+
+This repository depends on and interoperates with third-party software, model components, and hosted services. Their original licenses and terms remain applicable.
+
+## Model-related components
+
+| Component | Upstream | License / terms |
+| --- | --- | --- |
+| Mage-Flow / Mage-Flow-Turbo | Microsoft Mage | MIT |
+| Qwen3-VL-derived Text Encoder/tokenizer lineage | Qwen Team / Alibaba | Apache License 2.0 |
+
+See [MODEL_LICENSE.md](MODEL_LICENSE.md) for the model-specific licensing boundary.
+
+## Runtime and development ecosystem
+
+The project uses or interoperates with software including JAX, Keras, Orbax, NumPy, pytest, Python, and related transitive dependencies. Each package remains governed by its own upstream license.
+
+## Hosted platforms and services
+
+Kaggle, Hugging Face, GitHub, and other hosted platforms are services operated by their respective providers and remain subject to their own terms of service, acceptable-use rules, trademarks, and privacy policies.
+
+## No endorsement
+
+References to upstream projects or service providers are for technical attribution and interoperability. They do not imply sponsorship, endorsement, partnership, or official status.
+
+## Redistribution
+
+Anyone redistributing this repository together with upstream model artifacts or third-party packages is responsible for satisfying all license and notice obligations that apply to the redistributed materials.

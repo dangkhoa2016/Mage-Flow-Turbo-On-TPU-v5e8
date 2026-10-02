@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Security report
+    url: mailto:i.am@dangkhoa.dev
+    about: Report security-sensitive issues privately instead of opening a public issue.
+  - name: Kaggle TPU demo
+    url: https://www.kaggle.com/code/dangkhoa2016/mage-flow-turbo-jax-tpu-v5e8-demo
+    about: Reproduce the public TPU execution path before reporting runtime differences.

@@ -5,6 +5,7 @@
 [![CI](https://github.com/dangkhoa2016/Mage-Flow-Turbo-On-TPU-v5e8/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/dangkhoa2016/Mage-Flow-Turbo-On-TPU-v5e8/actions/workflows/ci.yml)
 [![Release](https://img.shields.io/github/v/release/dangkhoa2016/Mage-Flow-Turbo-On-TPU-v5e8?display_name=tag&sort=semver)](https://github.com/dangkhoa2016/Mage-Flow-Turbo-On-TPU-v5e8/releases/tag/v1.0.0)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Model licenses](https://img.shields.io/badge/Model%20licenses-MIT%20%2B%20Apache--2.0-informational.svg)](MODEL_LICENSE.md)
 [![Python](https://img.shields.io/badge/Python-3.12-3776AB?logo=python&logoColor=white)](https://www.python.org/)
 [![JAX](https://img.shields.io/badge/JAX-0.10.2-5A5A5A)](https://github.com/jax-ml/jax)
 [![Keras](https://img.shields.io/badge/Keras-3.15.0-D00000?logo=keras&logoColor=white)](https://keras.io/)
@@ -125,9 +126,10 @@ python3 bootstrap/06_run_tpu_inference.py \
 
 ```bash
 python -m pip install -r requirements-ci.txt
-python -m compileall -q runtime bootstrap tests
+python -m compileall -q runtime bootstrap tests scripts
 pytest -q tests/test_cpu_regressions.py
 python scripts/check_docs.py
+python scripts/check_repo_health.py
 git diff --check
 ```
 
@@ -150,11 +152,28 @@ README là landing page. Tài liệu chi tiết nằm trong [Documentation Hub](
 | Troubleshooting | [Open](docs/troubleshooting.md) | [Mở](docs/troubleshooting.vi.md) |
 | Production runtime authority | [Open](docs/tpu-v5e8-production.md) | [Mở](docs/tpu-v5e8-production.vi.md) |
 
+## Community và hỗ trợ
+
+- [Contributing](.github/CONTRIBUTING.md)
+- [Code of Conduct](.github/CODE_OF_CONDUCT.md)
+- [Security Policy](.github/SECURITY.md)
+- [Support](.github/SUPPORT.md)
+- [Issue templates](.github/ISSUE_TEMPLATE)
+- [Pull request template](.github/PULL_REQUEST_TEMPLATE.md)
+
+Các báo cáo liên quan đến security nên làm theo hướng dẫn báo cáo riêng trong [SECURITY.md](.github/SECURITY.md), không mở public issue.
+
 ## License và upstream attribution
 
-Mã nguồn kỹ thuật và tài liệu gốc của repository này được phát hành theo [MIT License](LICENSE). Các thành phần model Mage-Flow và Text Encoder có lineage Qwen3-VL giữ nguyên license/attribution upstream. Repository này không relicensing model weights hoặc dependency bên thứ ba.
+[MIT License](LICENSE) ở cấp repository áp dụng cho mã nguồn kỹ thuật và tài liệu gốc mà repository này có quyền cấp MIT.
 
-Xem [NOTICE.md](NOTICE.md) và [Model và conversion](docs/model-and-conversion.vi.md).
+Các thành phần liên quan đến model có ranh giới license riêng:
+
+- Mage-Flow / Mage-Flow-Turbo lineage: upstream **MIT**.
+- Text Encoder/tokenizer có nguồn Qwen3-VL: upstream **Apache License 2.0**.
+- Converted model weights vẫn chịu các upstream terms tương ứng và **không bị repository này relicensing**.
+
+Xem [MODEL_LICENSE.md](MODEL_LICENSE.md), [MODEL_LICENSE.vi.md](MODEL_LICENSE.vi.md), [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md), [NOTICE.md](NOTICE.md) và các bản license upstream được lưu trong [licenses/](licenses/).
 
 ## Tác giả
 

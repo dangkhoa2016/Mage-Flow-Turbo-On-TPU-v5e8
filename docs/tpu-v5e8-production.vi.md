@@ -1,5 +1,7 @@
 # Mage-Flow TPU v5e-8 — Runtime Production
 
+> 🌐 Ngôn ngữ / Language: [English](tpu-v5e8-production.md) | **Tiếng Việt**
+
 Tài liệu này ghi lại runtime production đã vượt qua acceptance ngày 2026-09-25.
 
 ## Hợp đồng đã qualify
@@ -30,14 +32,15 @@ Các mode segmented production cố ý yêu cầu packed request có cùng chi�
 | 768 | 15.228 s / 4 | 3.807 | 15.76 | ~14.76 GB | 0.750 s |
 | 1024 | 33.542 s / 4 | 8.385 | 7.16 | ~12.53 GB | 0.782 s |
 
-Các số liệu trên đến từ production runner cuối cùng đã promote, không phải các script thử nghiệm.
+Các số liệu trên đến từ production runner cuối cùng đã promote, không phải script thử nghiệm.
+
+> Đây là số đo warm theo stage. Chúng không phải full cold-start hoặc end-to-end image-generation latency.
 
 ## Yêu cầu về tính đúng
 
-Không được làm regress semantics timestep BF16:
-`jnp.asarray(timesteps, dtype=jnp.bfloat16).astype(jnp.float32)`.
+Không được làm regress BF16 timestep semantics: `jnp.asarray(timesteps, dtype=jnp.bfloat16).astype(jnp.float32)`.
 
-Phải construct/restore model state trên CPU trước khi `device_put` vào TPU mesh. Giữ per-request segmented attention cho concurrent execution và giữ query chunk 256 ở 1024 trừ khi có một TPU qualification mới thay thế authority hiện tại.
+Phải construct/restore model state trên CPU trước khi `device_put` vào TPU mesh. Giữ per-request segmented attention cho concurrent execution và query chunk 256 ở 1024 trừ khi có TPU qualification mới thay thế authority này.
 
 Output production ở 512, 768 và 1024 đã byte-identical với các PNG qualification đã được review trực quan trước đó.
 
@@ -45,13 +48,12 @@ Output production ở 512, 768 và 1024 đã byte-identical với các PNG quali
 
 Dùng `bootstrap/06_run_tpu_inference.py` với các subprocess stage tách biệt cho text encoder, transformer và VAE.
 
-Runner hỗ trợ topology `1x8`, `2x4`, và `4x2`. Production runner chỉ chấp nhận lịch 4 bước đã qualify.
+Runner hỗ trợ topology `1x8`, `2x4`, `4x2`. Production runner chỉ chấp nhận lịch bốn bước đã qualify.
 
-Các CPU test ở cấp repository nên bao phủ compatibility của masked-global cũ, segmented attention, segmented-query-chunk, fail-closed validation, topology parsing, auto policy và BF16 timestep semantics.
+## Xác minh release
 
-## Xác minh trước release
+CPU test và CI bao phủ repository integration; chúng không thay thế TPU release verification. Release candidate thay đổi runtime semantics cần được chạy lại trên TPU v5e-8 ở 4x2 cho 512, 768 và 1024 rồi đối chiếu accepted evidence authority.
 
-CPU tests và CI bao phủ pha repository integration; chúng không thay thế TPU release verification. Trước khi publish, phải chạy lại release candidate đã commit trên TPU v5e-8 ở 4x2 cho 512, 768 và 1024 rồi đối chiếu với evidence authority đã chấp nhận.
+Evidence archive SHA-256: `4982c750914599561cd5255c1ad9e58cfb02a9f2c26a299801271a92d2c0bf68`.
 
-SHA-256 của evidence archive:
-`4982c750914599561cd5255c1ad9e58cfb02a9f2c26a299801271a92d2c0bf68`.
+Xem [Release và verification](release-and-verification.vi.md) và [Benchmark](benchmarks.vi.md).

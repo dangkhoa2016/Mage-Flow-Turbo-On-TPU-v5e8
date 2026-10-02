@@ -22,9 +22,15 @@ jobs:
         run: python -m pip install -r requirements-ci.txt
 
       - name: Compile Python sources
-        run: python -m compileall -q runtime bootstrap tests
+        run: python -m compileall -q runtime bootstrap tests scripts
 
       - name: Run CPU regression tests
         env:
           KERAS_BACKEND: jax
         run: pytest -q tests/test_cpu_regressions.py
+
+      - name: Validate bilingual documentation
+        run: python scripts/check_docs.py
+
+      - name: Check whitespace
+        run: git diff --check
